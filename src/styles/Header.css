@@ -1,0 +1,31 @@
+header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 8px;
+    line-height: 1.6;
+    width: 100%;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 1rem;
+}
+
+.header-con {
+    display: flex;
+    align-items: center;
+    
+    justify-content: space-between;
+    width: min(100% - 5rem, 75rem);
+}
+
+.tr h1 {
+    font-size: 2rem;
+}
+
+.score p {
+    font-weight: 600;
+}
+
+.important {
+    color: red;
+    font-weight: 600;
+}

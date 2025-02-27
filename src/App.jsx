@@ -32,8 +32,10 @@ function App() {
   }
 
   return (
-      <>
+      <div className='app'>
+        
         <Header score={score} best={best} />
+        <main>
           <div className='container'>
               {memoryCards.map((card, index) => (
                   <div key={index} onClick={() => handleClick(index)} style={{cursor: 'pointer', border: '1px solid #000'}}>
@@ -41,7 +43,8 @@ function App() {
                   </div>
               ))}
           </div>
-      </>
+          </main>
+      </div>
   )
 }
 
