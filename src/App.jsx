@@ -1,86 +1,116 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef, } from 'react'
 import './styles/App.css'
 import Header from './components/Header';
-import { fetchRandomPosters} from './api';
+import { fetchRandomMovies} from './api';
 import { LoadingOutlined } from '@ant-design/icons';
-import { Spin } from 'antd';
+import { Button, Modal, InputNumber} from 'antd';
 
 function App() {
-  let initialCards = [];
+  const initialCards = useRef([]);
   const [memoryCards, setMemoryCards] = useState([]) 
   const [score, setScore] = useState(0)
   const [best, setBest] = useState(null)
   const [over, setOver] = useState(false)
-  const [loading, setLoading] = useState(true)
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [flipping, setFlipping] = useState(false);
+  const [amount, setAmount] = useState(12)
 
   useEffect(() => {
     async function load() {
       try {
-       const  results = await fetchRandomPosters()
-       setMemoryCards(results)
-       initialCards = results.map(result => ({...result}))
-       setOver(false)
-       setLoading(true)
-      } catch(error) {
-       console.error('Error loading data:', error);
-      } finally {
-        setTimeout(() =>{
-           setLoading(false)
-        }, 600)    
+        const results = await fetchRandomMovies(amount);
+        const initializedCards = results.map(result => ({
+          ...result,
+          clicks: 0,  
+        }));
+  
+        setMemoryCards(initializedCards);
+        initialCards.current = initializedCards;  
+        setOver(false);
+      } catch (error) {
+        console.error('Error loading data:', error);
       }
     }
- 
-    load()
-   }, [over])
+  
+    load();
+  }, [over]);
 
   function handleClick(i) {
-      const updatedCards = [...memoryCards];
-      updatedCards[i].clicks += 1;
-      let s = score + 1
-      setScore(s)
-      console.log( updatedCards[i].clicks)
-
-      if(updatedCards[i].clicks === 2) {
-          alert('You lost');
-          
-          if(best == null || s > best){
-            setBest(s - 1)
-          } 
-          setScore(0)
-          s = 0;
-          setMemoryCards(initialCards);
-          setOver(true)
+    setFlipping(true); 
   
-          
-      } else {
-          const shuffled = [...updatedCards].sort(() => Math.random() - 0.5);
-          setMemoryCards(shuffled)
-      }
-
-      if(score == memoryCards.length - 1) {      
-        setMemoryCards(initialCards)
-        setBest(s)
-        setScore(0)
-        s = 0;
-        alert('You win') 
-      }
+    setTimeout(() => {
+      setMemoryCards(prevCards => {
+        const updatedCards = prevCards.map((card, index) =>
+          index === i ? { ...card, clicks: card.clicks + 1 } : card
+        );
+  
+        const clickedCard = updatedCards[i];
+        const newScore = score + 1;
+  
+        if (clickedCard.clicks === 2) {
+          if (best === null || newScore - 1 > best) {
+            setBest(newScore - 1);
+          }
+          setScore(0);
+          setOver(true);
+          return initialCards.current;
+        }
+  
+        if (newScore === updatedCards.length) {
+          setBest(newScore);
+          setScore(0);
+          setOver(true);
+          setIsModalOpen(true);
+          return initialCards.current;
+        }
+  
+        setScore(newScore);
+        return updatedCards.sort(() => Math.random() - 0.5);
+      });
+  
+      setFlipping(false);
+    }, 600); 
   }
-
-  if(loading == true) {
-    return  <Spin size='large' fullscreen />
+  
+  function handleApply() {
+    setFlipping(true); 
+  
+    setTimeout(() => {
+      setOver(true); 
+      setScore(0);
+      setFlipping(false); 
+    }, 600); 
   }
+  
+  
 
   return (
       <div className='app'>
-        
-        <Header score={score} best={best} />
+        <Modal open={isModalOpen} title={<div></div>} onCancel={() =>  setIsModalOpen(false)} footer={
+          <div>
+          <InputNumber min={4} max={20} onChange={(value) => setAmount(value)} value={amount} className='card-amount'  />
+          <Button type='primary' style={{marginLeft: '20px'}} onClick={() => {handleApply()}}>Apply</Button>
+          </div>
+        }>
+         <h2 className='modal-win'>You won!</h2>
+         <p className='some-text'>Congratulations, you've got a good memory. You can change the number of cards if you want.</p>
+        </Modal>
+        <Header score={score} best={best} Amount={[amount, setAmount]} handleApply={handleApply} />
         <main>
-          <div className='container'>
+          <div className='card-container'>
               {memoryCards.map((card, index) => (
-                  <div className='card' key={index} onClick={() => handleClick(index)}>
-                    <img src={card.image} alt="" style={{width: "100%"}} />
-                    <div className="card-text"><p>{card.title}</p></div>  
+                  <div className={`card ${flipping ? "flipping" : ""}`} key={index} onClick={() => handleClick(index)}>
+                  <div className="card-inner">
+                    <div className="card-front">
+                      <img src={card.image} alt="" style={{ width: "100%" }} />
+                      <div className="card-text"><p>{card.title}</p></div>
+                    </div>
+                    <div className="card-back">
+                      <img src="src/styles/oscar.png" alt="" />
+                    </div>
                   </div>
+                </div>
+                
               ))}
           </div>
           </main>

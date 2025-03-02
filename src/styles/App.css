@@ -6,7 +6,7 @@ main {
   margin-bottom: 5px;
 }
 
-.container {
+.card-container {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 2rem;
@@ -14,31 +14,98 @@ main {
 }
 
 .card {
-    border-radius: 5px;
-    overflow: hidden;
-    box-shadow: 0px 0px 10px 3px #0000002e;
-    cursor: pointer;
-    transition: all 0.4s;
+  border-radius: 5px;
+  overflow: hidden;
+  box-shadow: 0px 0px 10px 3px #0000002e;
+  cursor: pointer;
+  transition: transform 0.4s, box-shadow 0.4s;
+  width: 100%;
+  height: 360px; /* Ensuring space for both image & text */
+  position: relative;
+  perspective: 1000px; /* Needed for 3D flip */
 }
 
-.card img {
+.card-inner {
   width: 100%;
-  height: 300px;
+  height: 100%;
+  transition: transform 0.5s;
+  transform-style: preserve-3d;
+  position: relative;
 }
 
 .card-text {
-  height: 50px;
+  height: 60px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2; /* Show max 2 lines */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-align: center;
+  font-size: 1.2rem;
+  font-weight: 600;
+  padding: 5px;
+  word-wrap: break-word;
+  padding: 2px;
+}
+
+.card-text p {
+  height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.2rem;
-  font-weight: 600;
-  margin-top: -5px;
-  padding: 5px;
 }
 
+.card.flipping .card-inner {
+  transform: rotateY(180deg);
+}
+
+.card-front, .card-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background: white;
+  border-radius: 5px;
+}
+
+.card-back {
+  transform: rotateY(180deg);
+  background: #ddd; /* Adjust this for a better backside look */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #555;
+}
+
+/* Existing hover effect */
 .card:hover {
   transform: scale(1.01);
   box-shadow: 0 10px 40px #757667;
 }
 
+.card img {
+  width: 100%;
+  height: 300px;
+  object-fit: fill;
+}
+
+.card-back img {
+  height: 93%;
+  object-fit: cover;
+}
+
+.modal-win {
+  text-align: center;
+  font-size: 1.7rem;
+}
+
+.some-text {
+  text-align: center;
+  font-size: 1.2rem;
+  padding-top: 10px;
+  padding-bottom: 20px;
+}

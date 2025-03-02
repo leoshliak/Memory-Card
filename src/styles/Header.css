@@ -29,3 +29,57 @@ header {
     color: red;
     font-weight: 600;
 }
+
+.score {
+    display: flex;
+    gap: 20px;
+}
+
+.rest {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.card-amount {
+    width: 50%;
+}
+
+.amount {
+    display: flex;
+    gap: 15px;
+}
+
+@media (max-width: 600px) {
+    .tr h1 {
+        font-size: 1.5rem;
+    }
+
+    .tr p {
+        font-size: 0.8rem;
+    }
+  
+    header { 
+      padding: 10px 20px;
+    }
+
+    .header-con {
+        width: 100%;
+    }
+
+    .tr {
+        max-width: 50%;
+    }
+
+    .rest {
+        align-items: end;
+    }
+
+    .score {
+        font-size: 1.05rem;
+    }
+
+    .amount {
+        width: 75%;
+    }
+}
