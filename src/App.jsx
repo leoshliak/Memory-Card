@@ -106,7 +106,7 @@ function App() {
                       <div className="card-text"><p>{card.title}</p></div>
                     </div>
                     <div className="card-back">
-                      <img src="src/styles/oscar.png" alt="" />
+                    <img src="/oscar.png" alt="Back of the card" />
                     </div>
                   </div>
                 </div>
